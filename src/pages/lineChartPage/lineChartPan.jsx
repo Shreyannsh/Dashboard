@@ -4,6 +4,7 @@ import { Chart, registerables } from "chart.js";
 import "chartjs-plugin-zoom";
 import "chartjs-adapter-moment";
 import zoomPlugin from "chartjs-plugin-zoom";
+
 Chart.register(...registerables, zoomPlugin);
 
 export default function LineChart({ data }) {

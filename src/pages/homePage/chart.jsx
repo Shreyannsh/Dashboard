@@ -1,22 +1,21 @@
-// install (please try to align the version of installed @nivo packages)
-// yarn add @nivo/bar
 import { ResponsiveBar } from "@nivo/bar";
-import { data } from "../../data";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
-// make sure parent container have a defined height when using
-// responsive component, otherwise height will be 0 and
-// no chart will be rendered.
-// website examples showcase many properties,
-// you'll often use just a few of them.
-export default function MyResponsiveBar({ data /* see data tab */ }) {
+export default function MyResponsiveBar({ data }) {
+  const filterData = useSelector((state) => state.filteredData);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleClick = (event) => {
     const feature = event.data.feature;
-    //console.log(feature);
     navigate(`/lineChartPage/${feature}`);
   };
+
+  useEffect(() => {
+    dispatch({ type: "collectiveData" });
+  }, [filterData]);
 
   return (
     <ResponsiveBar

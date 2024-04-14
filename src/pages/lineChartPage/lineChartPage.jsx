@@ -1,24 +1,13 @@
-// install (please try to align the version of installed @nivo packages)
-// yarn add @nivo/line
 import "./lineChartPage.css";
-import { ResponsiveLine } from "@nivo/line";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { ZoomPan } from "react-zoom-pan-pinch";
 import LineChart from "./lineChartPan";
-//import { ReactSVGPanZoom } from "react-svg-pan-zoom";
-// make sure parent container have a defined height when using
-// responsive component, otherwise height will be 0 and
-// no chart will be rendered.
-// website examples showcase many properties,
-// you'll often use just a few of them.
 
 export default function MyResponsiveLine() {
   const { feature } = useParams();
-  console.log(feature, "feature");
-  const data = useSelector((state) => state.data);
-  console.log(data);
+
+  const data = useSelector((state) => state.filteredData);
+
   const requiredFeature = data.reduce((acc, crr) => {
     const existingDayIndex = acc.findIndex((obj) => obj?.day === crr.Day);
 
@@ -37,13 +26,10 @@ export default function MyResponsiveLine() {
   const transformedData = requiredFeature.map((item) => {
     const [day, month, year] = item?.day.split("/");
 
-    // Create a Date object
     const date = new Date(`${year}-${month}-${day}`);
 
-    // Get the month name
     const monthName = date.toLocaleString("en-US", { month: "short" });
 
-    // Format the date as "DD Mon"
     const formattedDate = `${day} ${monthName}`;
     return {
       day: formattedDate,
@@ -53,6 +39,7 @@ export default function MyResponsiveLine() {
 
   return (
     <div className="lineChartPage">
+      <LineChart data={transformedData} />
       {/* <ReactSVGPanZoom
         width={800}
         height={600}
@@ -102,7 +89,6 @@ export default function MyResponsiveLine() {
         </TransformComponent>
       </TransformWrapper> */}
       {/* </ReactSVGPanZoom> */}
-      <LineChart data={transformedData} />
     </div>
   );
 }
