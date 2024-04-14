@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
+import TimeRangePicker from "@wojtekmaj/react-timerange-picker";
 
 function Filters() {
   const dispatch = useDispatch();
@@ -10,27 +11,30 @@ function Filters() {
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
 
-  console.log(age, gender, ageFilter);
+  const [value, onChange] = useState(["10:00", "11:00"]);
 
   const ageFunction = (value) => {
     setAge(() => value);
     dispatch({ type: "ageFilter", payload: value });
+    Cookies.set("age", value);
   };
 
   const genderFunction = (value) => {
     setGender(() => value);
     dispatch({ type: "genderFilter", payload: value });
+    Cookies.set("gender", value);
   };
 
-  useEffect(() => {
-    console.log("hi");
-    Cookies.set("age", ageFilter);
-  }, [ageFilter]);
+  //   useEffect(() => {
+  //     console.log("hi", age);
+  //     Cookies.set("agee", 999);
+  //     Cookies.set("age", age);
+  //   }, [age]);
 
-  useEffect(() => {
-    console.log("hii");
-    Cookies.set("gender", genderFilter);
-  }, [genderFilter]);
+  //   useEffect(() => {
+  //     console.log("hii", gender);
+  //     Cookies.set("gender", gender);
+  //   }, [gender]);
 
   useEffect(() => {
     dispatch({ type: "filter" });
@@ -39,14 +43,10 @@ function Filters() {
   useEffect(() => {
     const value1 = Cookies.get("age");
     const value2 = Cookies.get("gender");
-    // console.log(value1, value2, "cookiefilter");
-    setAge(() => value1);
-    setGender(() => value2);
+    setAge(value1);
+    setGender(value2);
   }, []);
 
-  const value1 = Cookies.get("age");
-  const value2 = Cookies.get("gender");
-  console.log(Cookies.get("age"), value2, "cookiefilter");
   return (
     <div>
       <label>
@@ -65,6 +65,9 @@ function Filters() {
           <option value="Female">Female</option>
         </select>
       </label>
+      <div>
+        <TimeRangePicker onChange={onChange} value={value} />
+      </div>
     </div>
   );
 }

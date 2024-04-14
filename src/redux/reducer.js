@@ -1,6 +1,5 @@
 import { data } from "../data";
 
-//console.log(collectiveData);
 const initialState = {
   data: data,
   collectiveData: [],
@@ -9,15 +8,11 @@ const initialState = {
   filteredData: data,
 };
 
-console.log(initialState);
-
 export const dashboardReducer = (state = initialState, action) => {
   switch (action.type) {
     case "ageFilter":
-      console.log(action.payload);
       return { ...state, ageFilter: action.payload };
     case "genderFilter":
-      console.log(action.payload);
       return { ...state, genderFilter: action.payload };
 
     case "filter":
@@ -30,15 +25,13 @@ export const dashboardReducer = (state = initialState, action) => {
       if (state.genderFilter) {
         data = data.filter((obj) => obj.Gender === state.genderFilter);
       }
-      console.log(data);
+
       return { ...state, filteredData: data };
 
     case "collectiveData":
       const collectiveData = state.filteredData.reduce(
         (acc, crr) => {
-          //console.log(acc);
           acc = acc.map((feat) => {
-            // console.log(feat);
             if (feat?.feature === "A") {
               return { ...feat, hoursUsed: feat.hoursUsed + crr.A };
             }

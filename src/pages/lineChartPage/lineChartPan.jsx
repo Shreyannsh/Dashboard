@@ -8,7 +8,6 @@ import zoomPlugin from "chartjs-plugin-zoom";
 Chart.register(...registerables, zoomPlugin);
 
 export default function LineChart({ data }) {
-  console.log(data);
   const chartData = {
     labels: data.map((item) => item.day),
     datasets: [
