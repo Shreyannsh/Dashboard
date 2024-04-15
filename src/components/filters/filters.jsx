@@ -88,10 +88,12 @@ function Filters() {
         queryParams[key] = value;
       }
       console.log(queryParams);
-      console.log(queryParams.dates);
+      console.log(queryParams.age);
+      console.log(queryParams.gender);
+      console.log(queryParams.filterDates);
       setAge(queryParams?.age);
       setGender(queryParams?.gender);
-      setValue(queryParams?.dates?.split(","));
+      setValue(queryParams?.filterDates?.split(","));
     }
   }, [location.search]);
 
