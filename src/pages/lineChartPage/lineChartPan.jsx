@@ -11,13 +11,13 @@ Chart.register(...registerables, zoomPlugin);
 export default function LineChart({ data }) {
   const dateRange = useSelector((state) => state.dateFilter);
 
-  const transformedData = dateRange.map((item) => {
+  const transformedData = dateRange?.map((item) => {
     const date = new Date(item);
     const options = { month: "short", day: "numeric" };
     const formattedDate = date.toLocaleDateString("en-US", options);
     return formattedDate;
   });
-  console.log(transformedData);
+  //console.log(transformedData);
   const chartData = {
     labels: data.map((item) => item.day),
     datasets: [
@@ -39,8 +39,8 @@ export default function LineChart({ data }) {
         time: {
           unit: "day",
         },
-        min: transformedData.length > 0 && transformedData[0], // Minimum date
-        max: transformedData.length > 0 && transformedData[1], // Maximum date
+        min: transformedData?.length > 0 && transformedData[0], // Minimum date
+        max: transformedData?.length > 0 && transformedData[1], // Maximum date
       },
       y: {
         beginAtZero: true,

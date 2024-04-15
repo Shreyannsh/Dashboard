@@ -8,7 +8,7 @@ function Filters() {
   const ageFilter = useSelector((state) => state.ageFilter);
   const genderFilter = useSelector((state) => state.genderFilter);
   const dateFilter = useSelector((state) => state.dateFilter);
-  const { combine, allowedRange } = DateRangePicker;
+  const { allowedRange } = DateRangePicker;
 
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
@@ -18,43 +18,62 @@ function Filters() {
     new Date(2022, 9, 29),
   ]);
 
+  const [filters, setFilters] = useState({});
+
+  console.log(filters, "filters");
+
   const ageFunction = (value) => {
-    setAge(() => value);
+    setAge(value);
+    setFilters({ ...filters, age: value });
     dispatch({ type: "ageFilter", payload: value });
     Cookies.set("age", value);
   };
 
   const genderFunction = (value) => {
-    console.log("xxxxxxxxxx");
-    setGender(() => value);
+    setGender(value);
+    setFilters({ ...filters, gender: value });
     dispatch({ type: "genderFilter", payload: value });
     Cookies.set("gender", value);
   };
 
   const handleChange = (value) => {
-    // console.log(value);
-    // let arr = [];
-    // if (value) {
-    //   value?.forEach((item) => {
-    //     const date = new Date(item);
-    //     const options = { month: "short", day: "numeric" };
-    //     const formattedDate = date.toLocaleDateString("en-US", options);
-    //     arr = [...arr, formattedDate];
-    //   });
-    // }
-    console.log("hiiiii");
-    console.log(value, "value");
-    setValue(() => value);
+    console.log(value);
+    setValue(value);
+    setFilters({ ...filters, dates: value });
     dispatch({ type: "dateFilter", payload: value });
     if (value) {
-      console.log("00000");
       Cookies.set("dates", value);
     }
+  };
+
+  const closeFunction = () => {
+    //console.log("kkkkkk");
+    setValue([new Date(2022, 9, 4), new Date(2022, 9, 29)]);
+  };
+
+  const [generatedUrl, setGeneratedUrl] = useState("");
+
+  const handleGenerateUrl = () => {
+    // Convert filters to URL parameters
+    const urlParams = new URLSearchParams(filters).toString();
+    // Generate the URL
+    const url = `${window.location.origin}?${urlParams}`;
+    // Set the generated URL to state
+    setGeneratedUrl(url);
+    // Copy the generated URL to clipboard
+    // navigator.clipboard
+    //   .writeText(url)
+    //   .then(() => console.log("URL copied to clipboard"))
+    //   .catch((error) => console.error("Failed to copy URL:", error));
   };
 
   useEffect(() => {
     dispatch({ type: "filter" });
   }, [ageFilter, genderFilter, dateFilter]);
+
+  useEffect(() => {
+    setFilters({ age: age, gender: gender, dates: value });
+  }, [age, gender, value]);
 
   useEffect(() => {
     const value1 = Cookies.get("age");
@@ -66,11 +85,11 @@ function Filters() {
 
     setAge(value1);
     setGender(value2);
+
     if (dates.length > 1) {
       setValue(dates);
       handleChange(dates);
     } else {
-      console.log("kkkkkkkkk");
       handleChange(value);
     }
   }, []);
@@ -97,9 +116,13 @@ function Filters() {
         placeholder="Select Date Range"
         value={value}
         onChange={handleChange}
+        onClose={closeFunction}
         shouldDisableDate={allowedRange("2022-10-04", "2022-10-29")}
         // defaultValue={[new Date(2022, 10, 4), new Date(2022, 10, 29)]}
       />
+      <button onClick={() => handleGenerateUrl()}>
+        {generatedUrl ? "Url copied" : "Copy Url"}
+      </button>
     </div>
   );
 }

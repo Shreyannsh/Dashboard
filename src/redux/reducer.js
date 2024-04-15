@@ -31,20 +31,20 @@ export const dashboardReducer = (state = initialState, action) => {
       }
 
       if (state.dateFilter) {
-        console.log("jjjjjj");
+        //  console.log("jjjjjj");
         data = data.filter((obj) => {
           const [day, month, year] = obj.Day.split("/");
 
           // Create a new Date object with the components (Note: month - 1 because months are zero-indexed)
           const date = new Date(year, month - 1, day);
-          return date > state.dateFilter[0] && date < state.dateFilter[1];
+          return date >= state.dateFilter[0] && date <= state.dateFilter[1];
         });
       }
-      console.log(data);
+      //console.log(data);
       return { ...state, filteredData: data };
 
     case "collectiveData":
-      console.log(state.filteredData);
+      //console.log(state.filteredData);
       const collectiveData = state.filteredData.reduce(
         (acc, crr) => {
           acc = acc.map((feat) => {
