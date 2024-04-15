@@ -11,21 +11,20 @@ function Filters() {
   const ageFilter = useSelector((state) => state.ageFilter);
   const genderFilter = useSelector((state) => state.genderFilter);
   const dateFilter = useSelector((state) => state.dateFilter);
+
   const { allowedRange } = DateRangePicker;
 
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
 
-  const [value, setValue] = useState([
-    new Date(2022, 9, 4),
-    new Date(2022, 9, 29),
-  ]);
+  const [value, setValue] = useState([new Date(), new Date()]);
 
   const [filters, setFilters] = useState({});
-
-  // console.log(filters, "filters");
+  console.log(value);
+  console.log(filters, "filters");
 
   const ageFunction = (value) => {
+    // console.log(value, "value in function");
     setAge(value);
     setFilters({ ...filters, age: value });
     dispatch({ type: "ageFilter", payload: value });
@@ -40,8 +39,8 @@ function Filters() {
   };
 
   const handleChange = (value) => {
-    console.log(value);
-    setValue(value);
+    console.log(value, "value in  handleChange");
+    setValue([new Date(value[0]), new Date(value[1])]);
     setFilters({ ...filters, filterDates: value });
     dispatch({ type: "dateFilter", payload: value });
     if (value) {
@@ -56,7 +55,7 @@ function Filters() {
 
   const [generatedUrl, setGeneratedUrl] = useState("");
 
-  // to copy the url with filters
+  // to copy the
   const handleGenerateUrl = () => {
     // Convert filters to URL parameters
     const urlParams = new URLSearchParams(filters).toString();
@@ -81,19 +80,22 @@ function Filters() {
   // to retrive filters from url
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    if (params) {
+    if (params.size > 0) {
+      // console.log(typeof params, params, "params", params.size);
       const queryParams = {};
 
+      // Iterate over each query parameter and add it to queryParams object
       for (const [key, value] of params.entries()) {
         queryParams[key] = value;
       }
       console.log(queryParams);
-      console.log(queryParams.age);
-      console.log(queryParams.gender);
-      console.log(queryParams.filterDates);
-      setAge(queryParams?.age);
-      setGender(queryParams?.gender);
-      setValue(queryParams?.filterDates?.split(","));
+      ageFunction(queryParams?.age);
+      genderFunction(queryParams?.gender);
+      const dateStrings = queryParams?.filterDates?.split(",");
+      const dates = dateStrings.map((dateStr) => new Date(dateStr));
+      handleChange(dates);
+      // Update state with parsed query parameters
+      // setFilters(queryParams);
     }
   }, [location.search]);
 
@@ -106,14 +108,18 @@ function Filters() {
     const dateStrings = decodeURIComponent(value3).split(",");
     const dates = dateStrings.map((dateStr) => new Date(dateStr));
 
-    setAge(value1);
-    setGender(value2);
+    // console.log(value1 === undefined, typeof value2, dates);
+
+    value1 !== undefined && ageFunction(value1);
+    value2 !== undefined && genderFunction(value2);
 
     if (dates.length > 1) {
-      setValue(dates);
+      //console.log(dates, "dates from useeffect when data is recieved");
       handleChange(dates);
     } else {
-      handleChange(value);
+      //console.log(value, "inital preset value in usestate");
+      setValue([new Date(2022, 9, 4), new Date(2022, 9, 29)]);
+      handleChange([new Date(2022, 9, 4), new Date(2022, 9, 29)]);
     }
   }, []);
 

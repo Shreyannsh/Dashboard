@@ -11,7 +11,7 @@ import Filters from "./components/filters/filters";
 
 function App() {
   const collectiveData = useSelector((state) => state.collectiveData);
-  console.log(collectiveData);
+  // console.log(collectiveData);
   return (
     <div className="App">
       <h1>Hello</h1>
