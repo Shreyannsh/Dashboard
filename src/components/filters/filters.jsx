@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
-import TimeRangePicker from "@wojtekmaj/react-timerange-picker";
-
+import { DateRangePicker } from "rsuite";
+import "rsuite/DateRangePicker/styles/index.css";
 function Filters() {
   const dispatch = useDispatch();
   const ageFilter = useSelector((state) => state.ageFilter);
   const genderFilter = useSelector((state) => state.genderFilter);
+  const dateFilter = useSelector((state) => state.dateFilter);
+  const { combine, allowedRange } = DateRangePicker;
 
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
 
-  const [value, onChange] = useState(["10:00", "11:00"]);
+  const [value, setValue] = useState([
+    new Date(2022, 9, 4),
+    new Date(2022, 9, 29),
+  ]);
 
   const ageFunction = (value) => {
     setAge(() => value);
@@ -20,31 +25,54 @@ function Filters() {
   };
 
   const genderFunction = (value) => {
+    console.log("xxxxxxxxxx");
     setGender(() => value);
     dispatch({ type: "genderFilter", payload: value });
     Cookies.set("gender", value);
   };
 
-  //   useEffect(() => {
-  //     console.log("hi", age);
-  //     Cookies.set("agee", 999);
-  //     Cookies.set("age", age);
-  //   }, [age]);
-
-  //   useEffect(() => {
-  //     console.log("hii", gender);
-  //     Cookies.set("gender", gender);
-  //   }, [gender]);
+  const handleChange = (value) => {
+    // console.log(value);
+    // let arr = [];
+    // if (value) {
+    //   value?.forEach((item) => {
+    //     const date = new Date(item);
+    //     const options = { month: "short", day: "numeric" };
+    //     const formattedDate = date.toLocaleDateString("en-US", options);
+    //     arr = [...arr, formattedDate];
+    //   });
+    // }
+    console.log("hiiiii");
+    console.log(value, "value");
+    setValue(() => value);
+    dispatch({ type: "dateFilter", payload: value });
+    if (value) {
+      console.log("00000");
+      Cookies.set("dates", value);
+    }
+  };
 
   useEffect(() => {
     dispatch({ type: "filter" });
-  }, [ageFilter, genderFilter]);
+  }, [ageFilter, genderFilter, dateFilter]);
 
   useEffect(() => {
     const value1 = Cookies.get("age");
     const value2 = Cookies.get("gender");
+    const value3 = Cookies.get("dates");
+
+    const dateStrings = decodeURIComponent(value3).split(",");
+    const dates = dateStrings.map((dateStr) => new Date(dateStr));
+
     setAge(value1);
     setGender(value2);
+    if (dates.length > 1) {
+      setValue(dates);
+      handleChange(dates);
+    } else {
+      console.log("kkkkkkkkk");
+      handleChange(value);
+    }
   }, []);
 
   return (
@@ -65,9 +93,13 @@ function Filters() {
           <option value="Female">Female</option>
         </select>
       </label>
-      <div>
-        <TimeRangePicker onChange={onChange} value={value} />
-      </div>
+      <DateRangePicker
+        placeholder="Select Date Range"
+        value={value}
+        onChange={handleChange}
+        shouldDisableDate={allowedRange("2022-10-04", "2022-10-29")}
+        // defaultValue={[new Date(2022, 10, 4), new Date(2022, 10, 29)]}
+      />
     </div>
   );
 }

@@ -5,6 +5,7 @@ const initialState = {
   collectiveData: [],
   ageFilter: "",
   genderFilter: "",
+  dateFilter: [],
   filteredData: data,
 };
 
@@ -14,6 +15,9 @@ export const dashboardReducer = (state = initialState, action) => {
       return { ...state, ageFilter: action.payload };
     case "genderFilter":
       return { ...state, genderFilter: action.payload };
+
+    case "dateFilter":
+      return { ...state, dateFilter: action.payload };
 
     case "filter":
       let data = [...state.data];
@@ -26,9 +30,21 @@ export const dashboardReducer = (state = initialState, action) => {
         data = data.filter((obj) => obj.Gender === state.genderFilter);
       }
 
+      if (state.dateFilter) {
+        console.log("jjjjjj");
+        data = data.filter((obj) => {
+          const [day, month, year] = obj.Day.split("/");
+
+          // Create a new Date object with the components (Note: month - 1 because months are zero-indexed)
+          const date = new Date(year, month - 1, day);
+          return date > state.dateFilter[0] && date < state.dateFilter[1];
+        });
+      }
+      console.log(data);
       return { ...state, filteredData: data };
 
     case "collectiveData":
+      console.log(state.filteredData);
       const collectiveData = state.filteredData.reduce(
         (acc, crr) => {
           acc = acc.map((feat) => {
