@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import { DateRangePicker } from "rsuite";
 import "rsuite/DateRangePicker/styles/index.css";
+import { useLocation, useHistory } from "react-router-dom";
 function Filters() {
+  const location = useLocation();
+  const history = useHistory();
   const dispatch = useDispatch();
   const ageFilter = useSelector((state) => state.ageFilter);
   const genderFilter = useSelector((state) => state.genderFilter);
@@ -57,14 +60,11 @@ function Filters() {
     // Convert filters to URL parameters
     const urlParams = new URLSearchParams(filters).toString();
     // Generate the URL
-    const url = `${window.location.origin}?${urlParams}`;
+    const url = `${window.location.origin}${window.location.pathname}?${urlParams}`;
     // Set the generated URL to state
     setGeneratedUrl(url);
     // Copy the generated URL to clipboard
-    // navigator.clipboard
-    //   .writeText(url)
-    //   .then(() => console.log("URL copied to clipboard"))
-    //   .catch((error) => console.error("Failed to copy URL:", error));
+    navigator.clipboard.writeText(url);
   };
 
   useEffect(() => {
