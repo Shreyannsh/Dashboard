@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import { DateRangePicker } from "rsuite";
 import "rsuite/DateRangePicker/styles/index.css";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 function Filters() {
   const location = useLocation();
-  const history = useHistory();
+
   const dispatch = useDispatch();
   const ageFilter = useSelector((state) => state.ageFilter);
   const genderFilter = useSelector((state) => state.genderFilter);
@@ -23,7 +23,7 @@ function Filters() {
 
   const [filters, setFilters] = useState({});
 
-  console.log(filters, "filters");
+  // console.log(filters, "filters");
 
   const ageFunction = (value) => {
     setAge(value);
@@ -42,7 +42,7 @@ function Filters() {
   const handleChange = (value) => {
     console.log(value);
     setValue(value);
-    setFilters({ ...filters, dates: value });
+    setFilters({ ...filters, filterDates: value });
     dispatch({ type: "dateFilter", payload: value });
     if (value) {
       Cookies.set("dates", value);
@@ -56,6 +56,7 @@ function Filters() {
 
   const [generatedUrl, setGeneratedUrl] = useState("");
 
+  // to copy the url with filters
   const handleGenerateUrl = () => {
     // Convert filters to URL parameters
     const urlParams = new URLSearchParams(filters).toString();
@@ -67,14 +68,34 @@ function Filters() {
     navigator.clipboard.writeText(url);
   };
 
+  //to apply filters
   useEffect(() => {
     dispatch({ type: "filter" });
   }, [ageFilter, genderFilter, dateFilter]);
 
+  //to update filter object to be used to generate url link
   useEffect(() => {
-    setFilters({ age: age, gender: gender, dates: value });
+    setFilters({ age: age, gender: gender, filterDates: value });
   }, [age, gender, value]);
 
+  // to retrive filters from url
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params) {
+      const queryParams = {};
+
+      for (const [key, value] of params.entries()) {
+        queryParams[key] = value;
+      }
+      console.log(queryParams);
+      console.log(queryParams.dates);
+      setAge(queryParams?.age);
+      setGender(queryParams?.gender);
+      setValue(queryParams?.dates?.split(","));
+    }
+  }, [location.search]);
+
+  // to update initial values on first render
   useEffect(() => {
     const value1 = Cookies.get("age");
     const value2 = Cookies.get("gender");
